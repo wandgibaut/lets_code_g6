@@ -4,8 +4,8 @@ import pandas as pd
 class Helper():
 
     @staticmethod
-    def add_median_row(data: pd.DataFrame) -> pd.DataFrame:
-        median_row = {}
+    def add_new_row(data: pd.DataFrame, function_to_apply=lambda x: x, name: str = 'new row') -> pd.DataFrame:
+        new_row = {}
         for column in data:
-            median_row[column] = data[column].median()
-        return data.append(pd.Series(median_row, name='median'))
+            new_row[column] = function_to_apply(data[column])
+        return data.append(pd.Series(new_row, name=name))

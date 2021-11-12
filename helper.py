@@ -22,10 +22,8 @@ class Helper():
     [PT-BR] https://pt.wikipedia.org/wiki/Outlier
     '''
     @staticmethod
-    def replace_outliers(data: pd.DataFrame, replace_values: pd.Series, k: float = 1.5) -> pd.DataFrame:
-        qr = data.quantile(0.75) - data.quantile(0.25)
-        lower_bound = data.quantile(0.25) - k*qr
-        upper_bound = data.quantile(0.75) + k*qr
+    def replace_outliers(data: pd.DataFrame, replace_values: pd.Series, k: float = 1.5, quantile: float = 0.25) -> pd.DataFrame:
+        lower_bound, upper_bound = Helper.get_lower_n_upper_bound(data, k, quantile)
 
         new_df = pd.DataFrame()
         for column in data:
@@ -34,6 +32,12 @@ class Helper():
 
         return new_df
 
+    @staticmethod
+    def get_lower_n_upper_bound(data: pd.DataFrame,  k: float = 1.5, quantile: float = 0.25) -> pd.DataFrame:
+        qr = data.quantile(1-quantile) - data.quantile(quantile)
+        lower_bound = data.quantile(quantile) - k*qr
+        upper_bound = data.quantile(1-quantile) + k*qr
+        return lower_bound, upper_bound
 
     @staticmethod
     def boxplot(*argv, column_name: str = 'Total Household Income', **kwargs) -> None:

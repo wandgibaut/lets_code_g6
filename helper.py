@@ -1,4 +1,4 @@
-from numpy import double, where
+from numpy import where
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -25,10 +25,12 @@ class Helper():
     def replace_outliers(data: pd.DataFrame, replace_values: pd.Series, k: float = 1.5, quantile: float = 0.25) -> pd.DataFrame:
         lower_bound, upper_bound = Helper.get_lower_n_upper_bound(data, k, quantile)
 
-        new_df = pd.DataFrame()
-        for column in data:
-            new_df[column] = where(data[column] >upper_bound[column], replace_values[column], data[column])
-            new_df[column] = where(data[column] <lower_bound[column], replace_values[column], new_df[column])
+        outliers_low = (data < lower_bound)
+        outliers_high = (data > upper_bound)
+        
+        new_df = data.copy()
+        new_df.mask(outliers_low, replace_values, inplace=True, axis=1)
+        new_df.mask(outliers_high, replace_values, inplace=True, axis=1)
 
         return new_df
 
@@ -43,7 +45,6 @@ class Helper():
     def boxplot(*argv, column_name: str = 'Total Household Income', **kwargs) -> None:
         fig, axs = plt.subplots(1, len(argv), figsize=(10, 5))
         fig.suptitle(f'Distribuição de Valores da coluna "{column_name}"')
-        #fig.set_label('fig')
 
         for i in range(len(argv)):
             data = argv[i][0]

@@ -4,7 +4,7 @@ import pandas as pd
 class Frequency:
 
     def __init__(self, data:pd.DataFrame):
-        self.data = data.select_dtypes(np.object_)
+        self.data = data
         self.columns = self.data.columns
     
 
@@ -37,7 +37,7 @@ class Frequency:
        return self.serie.value_counts()
     
     def __relative__(self) -> pd.Series:
-        return self.frequency['Absolute']/self.serie.count()
+        return self.serie.value_counts(normalize=True)
     
     def __absolute_accumulated__(self) -> pd.Series:
         return self.frequency['Absolute'].cumsum()

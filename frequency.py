@@ -3,9 +3,9 @@ import pandas as pd
 
 class Frequency:
 
-    def __init__(self, data:pd.DataFrame):
+    def __init__(self, data:pd.DataFrame, columns = pd.Series):
         self.data = data
-        self.columns = self.data.columns
+        self.columns = columns
     
 
     def show(self):

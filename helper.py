@@ -51,3 +51,19 @@ class Helper():
             title = argv[i][1]
             axs[i].boxplot(data[column_name])
             axs[i].set_title(title)
+    def means_data_per_income(data: pd.DataFrame, dummies_data: pd.DataFrame, col_income: str = 'Total Household Income', k: float = 10) -> pd.DataFrame:
+        
+        data_=data.copy()
+        col_ref='Income Reference'
+        
+        quantile_ref =(100-k)/100 # list reference sorted data
+        income_ref = data_[col_income].quantile(quantile_ref)        
+        k_ref_mask = data_[col_income] > income_ref
+        
+        data_.loc[k_ref_mask, col_ref] = f'The {k:0.2f}% richest'
+        data_.loc[(~k_ref_mask), col_ref] = 'Remainder'
+        
+        data_[dummies_data.columns]=dummies_data
+        
+        return pd.pivot_table(data_, index=col_ref)
+
